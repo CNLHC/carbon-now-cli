@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 // Native
-const {promisify} = require('util');
-const {basename, extname} = require('path');
+const { promisify } = require('util');
+const { basename, extname } = require('path');
 const asyncRename = promisify(require('fs').rename);
 
 // Packages
 const meow = require('meow');
-const {bold, red, green} = require('chalk');
+const { bold, red, green } = require('chalk');
 const opn = require('opn');
 const queryString = require('query-string');
 const terminalImage = require('terminal-image');
@@ -27,7 +27,7 @@ const presetHandler = require('./src/preset');
 const imgToClipboard = require('./src/util/img-to-clipboard');
 
 // Helpers
-const {CARBON_URL, LATEST_PRESET} = require('./src/helpers/globals');
+const { CARBON_URL, LATEST_PRESET } = require('./src/helpers/globals');
 let settings = require('./src/helpers/default-settings');
 
 const cli = meow(`
@@ -52,63 +52,63 @@ const cli = meow(`
  ${bold('Examples')}
    See: https://github.com/mixn/carbon-now-cli#examples
 `,
-{
-	flags: {
-		start: {
-			type: 'number',
-			alias: 's',
-			default: 1
-		},
-		end: {
-			type: 'number',
-			alias: 'e',
-			default: 1000
-		},
-		open: {
-			type: 'boolean',
-			alias: 'o',
-			default: false
-		},
-		location: {
-			type: 'string',
-			alias: 'l',
-			default: process.cwd()
-		},
-		target: {
-			type: 'string',
-			alias: 't',
-			default: null
-		},
-		interactive: {
-			type: 'boolean',
-			alias: 'i',
-			default: false
-		},
-		preset: {
-			type: 'string',
-			alias: 'p',
-			default: LATEST_PRESET
-		},
-		copy: {
-			type: 'boolean',
-			alias: 'c',
-			default: false
-		},
-		config: {
-			type: 'string',
-			default: undefined // So that default params trigger
-		},
-		fromClipboard: {
-			type: 'boolean',
-			default: false
-		},
-		headless: {
-			type: 'boolean',
-			alias: 'h',
-			default: false
+	{
+		flags: {
+			start: {
+				type: 'number',
+				alias: 's',
+				default: 1
+			},
+			end: {
+				type: 'number',
+				alias: 'e',
+				default: 1000
+			},
+			open: {
+				type: 'boolean',
+				alias: 'o',
+				default: false
+			},
+			location: {
+				type: 'string',
+				alias: 'l',
+				default: process.cwd()
+			},
+			target: {
+				type: 'string',
+				alias: 't',
+				default: null
+			},
+			interactive: {
+				type: 'boolean',
+				alias: 'i',
+				default: false
+			},
+			preset: {
+				type: 'string',
+				alias: 'p',
+				default: LATEST_PRESET
+			},
+			copy: {
+				type: 'boolean',
+				alias: 'c',
+				default: false
+			},
+			config: {
+				type: 'string',
+				default: undefined // So that default params trigger
+			},
+			fromClipboard: {
+				type: 'boolean',
+				default: false
+			},
+			headless: {
+				type: 'boolean',
+				alias: 'h',
+				default: false
+			}
 		}
-	}
-});
+	});
 const [FILE] = cli.input;
 const {
 	start: START_LINE,
@@ -173,7 +173,7 @@ let input;
 		// Task 2: Merge all given settings (default, preset, interactive), prepare URL
 		{
 			title: 'Preparing connection',
-			task: async ({urlEncodedContent}) => {
+			task: async ({ urlEncodedContent }) => {
 				// Save the current settings as 'latest-preset' to global config
 				// Don’t do so for local configs passed via --config
 				// The `save` method takes care of whether something should
@@ -186,8 +186,9 @@ let input;
 				settings = {
 					...settings,
 					code: urlEncodedContent,
-					l: FILE ? getLanguage(FILE) : 'auto'
+					l: FILE ? getLanguage(FILE) : settings.l ? getLanguage(settings.l) : 'auto'
 				};
+
 
 				// Prepare the querystring that we’ll send to Carbon
 				url = `${url}?${queryString.stringify(settings)}`;
@@ -206,7 +207,7 @@ let input;
 			title: 'Fetching beautiful image',
 			skip: () => OPEN,
 			task: async ctx => {
-				const {type: IMG_TYPE} = settings;
+				const { type: IMG_TYPE } = settings;
 				const SAVE_DIRECTORY = COPY ? tempy.directory() : LOCATION;
 				const FULL_DOWNLOADED_PATH = `${SAVE_DIRECTORY}/carbon.${IMG_TYPE}`;
 				const ORIGINAL_FILE_NAME = FILE ? basename(FILE, extname(FILE)) : 'stdin';
@@ -234,14 +235,14 @@ let input;
 		{
 			title: 'Copying image to clipboard',
 			skip: () => !COPY || OPEN,
-			task: async ({downloadedAs}) => {
+			task: async ({ downloadedAs }) => {
 				await imgToClipboard(downloadedAs);
 			}
 		}
 	]);
 
 	try {
-		const {downloadedAs} = await tasks.run();
+		const { downloadedAs } = await tasks.run();
 
 		console.log(`
   ${green('Done!')}`
@@ -275,7 +276,7 @@ let input;
 			}
 		}
 
-		updateNotifier({pkg}).notify();
+		updateNotifier({ pkg }).notify();
 
 		process.exit();
 	} catch (error) {

@@ -123,5 +123,8 @@
 	["vue", "vue"],
 	["xml", "xml"],
 	["yaml", "yaml"],
-	["yml", "yaml"]
+	["yml", "yaml"],
+	["txt","text/plain"],
+	["plain","text/plain"],
+	["cli","text/plain"]
 ]

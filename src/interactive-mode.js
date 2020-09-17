@@ -9,6 +9,13 @@ module.exports = async () => {
 	const answers = await inquirer
 		.prompt([
 			{
+				type: 'language',
+				name: 'l',
+				message: 'Language',
+				default: 'auto',
+				choices: Object.keys(carbonMap.l)
+			},
+			{
 				type: 'list',
 				name: 't',
 				message: 'Syntax theme:',
